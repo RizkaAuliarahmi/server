@@ -1,0 +1,26 @@
+{
+  "name": "BE",
+  "version": "1.0.0",
+  "description": "Tugas Besar Model Data\r - Dzakira Fabaillah (191524040)\r - Putri Syalwa Abdullah (191524054)\r - Rizka Auliarahmi (191524057)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GOPUT-GOJAK-GORIZ/server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GOPUT-GOJAK-GORIZ/server/issues"
+  },
+  "homepage": "https://github.com/GOPUT-GOJAK-GORIZ/server#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "mongodb": "^3.6.9"
+  }
+}
