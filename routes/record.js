@@ -25,8 +25,6 @@ recordRoutes.route("/record").get(function (req, res) {
 recordRoutes.route("/record/add").post(function (req, res) {
   let db_connect = dbo.getDb("employees");
   let newObj = req.body;
-
-
   try{
     db_connect.collection("records").insertOne(newObj);
     res.status(201).json({

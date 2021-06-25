@@ -7,6 +7,7 @@ const driverRoutes = express.Router();
 
 //This will help us connect to the database
 const dbo = require("../db/conn");
+// DRIVER DAFTAR
 
 // READ NEW ORDER //
 
@@ -19,5 +20,7 @@ const dbo = require("../db/conn");
 // DRIVER READ PROFILE //
 
 // DRIVER UPDATE PROFILE //
+
+// DRIVER UPDATE ACTIVE STATUS //
 
 module.exports = driverRoutes;
