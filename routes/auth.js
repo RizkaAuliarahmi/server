@@ -18,7 +18,8 @@ authRoutes.route("/auth/admin").post(function (req, res) {
                     if (err) throw err;
                     if(result[0].admin_password == req.body.admin_password ){
                         res.status(201).json({
-                            message: "Succesfully login"
+                            message: "Succesfully login",
+                            result
                         });
                     }else{
                         res.status(400).json({
@@ -42,7 +43,8 @@ authRoutes.route("/auth/cust").post(function (req, res) {
                     if (err) throw err;
                     if(result[0].customer_password == req.body.customer_password ){
                         res.status(201).json({
-                            message: "Succesfully login"
+                            message: "Succesfully login",
+                            result
                         });
                     }else{
                         res.status(400).json({
@@ -66,7 +68,8 @@ authRoutes.route("/auth/driver").post(function (req, res) {
                     if (err) throw err;
                     if(result[0].driver_password == req.body.driver_password ){
                         res.status(201).json({
-                            message: "Succesfully login"
+                            message: "Succesfully login",
+                            result
                         });
                     }else{
                         res.status(400).json({
