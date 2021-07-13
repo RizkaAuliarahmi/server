@@ -1,4 +1,5 @@
 const express = require("express");
+var mongodb = require('mongodb');
 
 // adminRoutes is an instance of the express router.
 // We use it to define our routes.
@@ -226,10 +227,10 @@ adminRoutes.route("/admin/read/alladmin").get(function (req, res) {
 // ADMIN READ AKUN ADMIN TERENTU (FA3)
 adminRoutes.route("/admin/read/admin/:id").get((req, res) => {
   let db_connect = dbo.getDb("employees");
-  var myquery = { id: req.body.id };
+  var myquery = { _id: new mongodb.ObjectID(req.params.id) };
   db_connect
     .collection("DataAdmin")
-    .findOne(myquery)
+    .find(myquery)
     .toArray(function (err, result) {
       if (err) throw err;
       res.json(result);
@@ -239,28 +240,35 @@ adminRoutes.route("/admin/read/admin/:id").get((req, res) => {
 // ADMIN UPDATE ADMIN ACCOUNT (FA4)
 adminRoutes.route("/admin/update/admin/:id").post(function (req, res) {
   let db_connect = dbo.getDb("employees");
-  let myquery = { id: req.body.id };
+  let myquery = { _id: new mongodb.ObjectID(req.params.id), admin_password: req.body.admin_curr_password};
+
   let newvalues = {
     $set: {
+      admin_name: req.body.admin_name,
       admin_email: req.body.admin_email,
-      admin_password: req.body.admin_password
-    },
+      admin_password: req.body.admin_new_password
+    }
   };
+
   db_connect
-    .collection("DataDriver")
-    .updateOne(myquery, newvalues, function (err, res) {
+    .collection("DataAdmin")
+    .updateOne(myquery, newvalues, function (err, result) {
       if (err) throw err;
-      console.log("1 document updated");
+      res.status(201).json({
+        message: "Succesfully updated",
+        result
+      });
     });
+  
 });
 
 // ADMIN DELETE ADMIN ACCOUNT (FA5)
 adminRoutes.route("/admin/delete/admin/:id").delete((req, res) => {
   let db_connect = dbo.getDb("employees");
-  var myquery = { id: req.body.id };
-  db_connect.collection("DataAdminr").deleteOne(myquery, function (err, obj) {
+  var myquery = { _id: new mongodb.ObjectID(req.params.id) };
+  db_connect.collection("DataAdmin").deleteOne(myquery, function (err, obj) {
     if (err) throw err;
-    console.log("1 document deleted");
+    res.status(201).json({obj, message : "Deleted Succesfully"});
   });
 });
 
