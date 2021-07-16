@@ -21,7 +21,7 @@ adminRoutes.route("/admin/get/driver/unverificated").get(function (req, res) {
     .toArray(function (err, result) {
       if (err) throw err;
       res.json(result);
-      console.log(result);
+      // console.log(result);
     });
 });
 
@@ -29,7 +29,7 @@ adminRoutes.route("/admin/get/driver/unverificated").get(function (req, res) {
 // ADMIN VERIFIKASI DRIVER (FD8)
 adminRoutes.route("/admin/update/verif/:id").post(function (req, res) {
   let db_connect = dbo.getDb("employees");
-  let myquery = { id: req.body.id };
+  var myquery = { _id: new mongodb.ObjectID(req.params.id) };
   let newvalues = {
     $set: {
       verification_status: true
@@ -47,14 +47,14 @@ adminRoutes.route("/admin/update/verif/:id").post(function (req, res) {
 // ADMIN READ 1 DRIVER (FD9)
 adminRoutes.route("/admin/read/driver/:id").get((req, res) => {
   let db_connect = dbo.getDb("employees");
-  var myquery = { id: req.body.id };
+  var myquery = { _id: new mongodb.ObjectID(req.params.id) };
   db_connect
     .collection("DataDriver")
-    .findOne(myquery)
+    .find(myquery)
     .toArray(function (err, result) {
       if (err) throw err;
       res.json(result);
-      console.log(result);
+      // console.log(result);
     });
 });
 
@@ -69,14 +69,14 @@ adminRoutes.route("/admin/read/alldriver").get(function (req, res) {
     .toArray(function (err, result) {
       if (err) throw err;
       res.json(result);
-      console.log(result);
+      // console.log(result);
     });
 });
 
 // ADMIN UPDATE DRIVER (FD5)
 adminRoutes.route("/admin/update/driver/:id").post(function (req, res) {
   let db_connect = dbo.getDb("employees");
-  let myquery = { id: req.body.id };
+  var myquery = { _id: new mongodb.ObjectID(req.params.id) };
   let newvalues = {
     $set: req.body
   };
@@ -91,27 +91,27 @@ adminRoutes.route("/admin/update/driver/:id").post(function (req, res) {
 // ADMIN DELETE DRIVER (FD4)
 adminRoutes.route("/admin/delete/driver/:id").delete((req, res) => {
   let db_connect = dbo.getDb("employees");
-  var myquery = { id: req.body.id };
+  var myquery = { _id: new mongodb.ObjectID(req.params.id) };
   db_connect.collection("DataDriver").deleteOne(myquery, function (err, obj) {
     if (err) throw err;
-    console.log("1 document deleted");
+    res.status(201).json({obj, message : "Deleted Succesfully"});
   });
 });
 
 // ADMIN SEARCH DRIVER BY NIK (FD3)
 adminRoutes.route("/admin/search/driver/:nik").get((req, res) => {
   let db_connect = dbo.getDb("employees");
-  var myquery = { nik: req.body.nik };
+  var myquery = { "profile.NIK": (req.params.nik).toString() };
+  console.log((req.params.nik).toString());
   db_connect
     .collection("DataDriver")
-    .findOne(myquery)
+    .find(myquery)
     .toArray(function (err, result) {
       if (err) throw err;
       res.json(result);
-      console.log(result);
+      // console.log(result);
     });
 });
-
 
 
 /* ADMIN READ UPDATE SEARCH DATA CUSTOMER */
@@ -127,28 +127,28 @@ adminRoutes.route("/admin/read/allcust").get(function (req, res) {
     .toArray(function (err, result) {
       if (err) throw err;
       res.json(result);
-      console.log(result);
+      // console.log(result);
     });
 });
 
 // AdMIN READ 1 CUSTOMER (FC6)
 adminRoutes.route("/admin/read/cust/:id").get((req, res) => {
   let db_connect = dbo.getDb("employees");
-  var myquery = { id: req.body.id };
+  var myquery = { _id: new mongodb.ObjectID(req.params.id) };
   db_connect
     .collection("DataCustomer")
-    .findOne(myquery)
+    .find(myquery)
     .toArray(function (err, result) {
       if (err) throw err;
       res.json(result);
-      console.log(result);
+      // console.log(result);
     });
 });
 
 // ADMIN UPDATE CUSTOMER STATUS BLOKIR (FC7)  
 adminRoutes.route("/admin/update/blokir/:id").post(function (req, res) {
   let db_connect = dbo.getDb("employees");
-  let myquery = { id: req.body.id };
+  var myquery = { _id: new mongodb.ObjectID(req.params.id) };
   let newvalues = {
     $set: {
       blocked: req.body.blocked
@@ -156,34 +156,43 @@ adminRoutes.route("/admin/update/blokir/:id").post(function (req, res) {
   };
   db_connect
     .collection("DataCustomer")
-    .updateOne(myquery, newvalues, function (err, res) {
+    .updateOne(myquery, newvalues, function (err, result) {
       if (err) throw err;
-      console.log("1 document updated");
+      res.status(201).json({result, message : "Updated Succesfully"});
     });
 });
 
 
 // ADMIN SEARCH CUSTOMER (FC4)
-adminRoutes.route("/admin/search/cust").get((req, res) => {
+adminRoutes.route("/admin/search/cust/:name").get((req, res) => {
   let db_connect = dbo.getDb("employees");
-  var myquery = { name: req.body.name };
+  var myquery = { "profile.name": (req.params.name).toString() };
   db_connect
     .collection("DataCustomer")
-    .findOne(myquery)
+    .find(myquery)
     .toArray(function (err, result) {
       if (err) throw err;
       res.json(result);
-      console.log(result);
+      // console.log(result);
     });
 });
 
+//ADMIN DELETE CUSTOMER
+adminRoutes.route("/admin/delete/customer/:id").delete((req, res) => {
+  let db_connect = dbo.getDb("employees");
+  var myquery = { _id: new mongodb.ObjectID(req.params.id) };
+  db_connect.collection("DataCustomer").deleteOne(myquery, function (err, obj) {
+    if (err) throw err;
+    res.status(201).json({obj, message : "Deleted Succesfully"});
+  });
+});
 
 /* ADMIN CRUD DATA ADMIN */
 
 // ADMIN CREATE ADMIN ACCOUNT (FA1)
 adminRoutes.route("/admin/add/newadmin").post(function (req, res) {
   let db_connect = dbo.getDb("employees");
-  console.log(req)
+  // console.log(req)
   if(req.body.admin_password == req.body.password_verification){
     console.log("verif pass berhasil");
     let newAdm = {
@@ -283,7 +292,6 @@ adminRoutes.route("/admin/read/allactivity").get(function (req, res) {
     .toArray(function (err, result) {
       if (err) throw err;
       res.json(result);
-      console.log(result);
     });
 });
 
@@ -297,7 +305,6 @@ adminRoutes.route("/admin/get/history/perday").get(function (req, res) {
     .toArray(function (err, result) {
       if (err) throw err;
       res.json(result);
-      console.log(result);
     });
 });
 
