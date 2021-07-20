@@ -102,7 +102,7 @@ adminRoutes.route("/admin/delete/driver/:id").delete((req, res) => {
 adminRoutes.route("/admin/search/driver/:nik").get((req, res) => {
   let db_connect = dbo.getDb("employees");
   var myquery = { "profile.NIK": (req.params.nik).toString() };
-  console.log((req.params.nik).toString());
+  // console.log((req.params.nik).toString());
   db_connect
     .collection("DataDriver")
     .find(myquery)
@@ -113,7 +113,22 @@ adminRoutes.route("/admin/search/driver/:nik").get((req, res) => {
     });
 });
 
-
+// ADMIN UPDATE DRIVER STATUS BLOKIR (FC7)  
+adminRoutes.route("/admin/update/blokirdriver/:id").post(function (req, res) {
+  let db_connect = dbo.getDb("employees");
+  var myquery = { _id: new mongodb.ObjectID(req.params.id) };
+  let newvalues = {
+    $set: {
+      blocked: req.body.blocked
+    },
+  };
+  db_connect
+    .collection("DataDriver")
+    .updateOne(myquery, newvalues, function (err, result) {
+      if (err) throw err;
+      res.status(201).json({result, message : "Updated Succesfully"});
+    });
+});
 /* ADMIN READ UPDATE SEARCH DATA CUSTOMER */
 
 // ADMIN READ CUSTOMER (FC3)
@@ -146,7 +161,7 @@ adminRoutes.route("/admin/read/cust/:id").get((req, res) => {
 });
 
 // ADMIN UPDATE CUSTOMER STATUS BLOKIR (FC7)  
-adminRoutes.route("/admin/update/blokir/:id").post(function (req, res) {
+adminRoutes.route("/admin/update/blokircust/:id").post(function (req, res) {
   let db_connect = dbo.getDb("employees");
   var myquery = { _id: new mongodb.ObjectID(req.params.id) };
   let newvalues = {
@@ -281,7 +296,7 @@ adminRoutes.route("/admin/delete/admin/:id").delete((req, res) => {
   });
 });
 
-/* ADMIN READ ACTIVITY HISTORY (ALL AND PER DAY/ MONTH/ YEAR) */
+/* ADMIN READ ACTIVITY HISTORY (ALL AND PER DAY/ PER CATEGORY) */
 
 // ADMIN READ ALL ACTIVITY (FR5)
 adminRoutes.route("/admin/read/allactivity").get(function (req, res) {
@@ -296,9 +311,10 @@ adminRoutes.route("/admin/read/allactivity").get(function (req, res) {
 });
 
 // ADMIN READ ACTIVITY PER DAY (FR6)
-adminRoutes.route("/admin/get/history/perday").get(function (req, res) {
+adminRoutes.route("/admin/get/history/perday/:date").get(function (req, res) {
   let db_connect = dbo.getDb("employees");
-  let myquery = { date: req.body.date };
+  let myquery = { date: {$gte: new Date(req.params.date), $lt: new Date(new Date(req.params.date).setDate(new Date(req.params.date).getDate()+1))} };
+  // console.log(new Date(new Date(req.params.date).setDate(new Date(req.params.date).getDate()+1)));
   db_connect
     .collection("ActivityHistory")
     .find(myquery)
@@ -307,6 +323,48 @@ adminRoutes.route("/admin/get/history/perday").get(function (req, res) {
       res.json(result);
     });
 });
+
+// ADMIN READ ACTIVITY PER CATEGORY (FR11)
+adminRoutes.route("/admin/get/history/:category").get(function (req, res) {
+  let db_connect = dbo.getDb("employees");
+  let myquery = { type_of_service: req.params.category };
+  db_connect
+    .collection("ActivityHistory")
+    .find(myquery)
+    .toArray(function (err, result) {
+      if (err) throw err;
+      res.json(result);
+    });
+});
+
+// READ 1 ACTIVITY
+adminRoutes.route("/admin/read/activity/:id").get((req, res) => {
+  let db_connect = dbo.getDb("employees");
+  var myquery = { _id: new mongodb.ObjectID(req.params.id) };
+  db_connect
+    .collection("ActivityHistory")
+    .find(myquery)
+    .toArray(function (err, result) {
+      if (err) throw err;
+      res.json(result);
+    });
+});
+
+// READ FEEDBACK 
+adminRoutes.route("/admin/read/feedback/:id").get((req, res) => {
+  let db_connect = dbo.getDb("employees");
+  var myquery = { _id: new mongodb.ObjectID(req.params.id) };
+  db_connect
+    .collection("Feedback")
+    .find(myquery)
+    .toArray(function (err, result) {
+      if (err) throw err;
+      res.json(result);
+    });
+});
+
+
+
 
 /* ADMIN READ ABOUT REPORTS */
 
