@@ -129,16 +129,13 @@ customerRoutes.route("/cust/create/order").post(function (req, res) {
     }
 });
 // CUSTOMER READ 1 ORDER // (FR4)
-customerRoutes.route("/cust/read/order").get(function (req, res) {
-    try{
-        db_connect.collection("ActivityHistory").find();
-        res.status(201).json({
-        message: "Succesfully inserted",
-        new_account
-    });
-    }catch(err){
-        console.log(err);
-    }
+customerRoutes.route("/cust/read/order/:id").get(function (req, res) {
+    let db_connect = dbo.getDb("employees");
+    var myquery = { _id: new mongodb.ObjectID(req.params.id) };
+        db_connect.collection("ActivityHistory").find(myquery).toArray(function (err, result) {
+            if (err) throw err;
+            res.json(result);
+          });
 });
 // CUSTOMER GET DRIVER PROFILE // (FD9)
 customerRoutes.route("/cust/get/driver_profile").get(function (req, res) {
@@ -232,17 +229,4 @@ customerRoutes.route("/cust/get/order_history/barang").get(function (req, res) {
         console.log(err);
     }
 });
-
-// READ 1 ACTIVITY
-customerRoutes.route("/cust/read/activity/:id").get((req, res) => {
-    let db_connect = dbo.getDb("employees");
-    var myquery = { _id: new mongodb.ObjectID(req.params.id) };
-    db_connect
-      .collection("ActivityHistory")
-      .find(myquery)
-      .toArray(function (err, result) {
-        if (err) throw err;
-        res.json(result);
-      });
-  });
 module.exports = customerRoutes;
