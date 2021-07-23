@@ -58,8 +58,8 @@ customerRoutes.route("/cust/read/account/:id").get(function(req, res){
 // CUSTOMER UPDATE ACCOUNT // (FC2)
 customerRoutes.route("/cust/update/account/:id").post(function (req, res) {
     let db_connect = dbo.getDb("employees");
-    let id_account = { _id : new mongodb.ObjectID(req.params.id)}
-    let new_values = {
+    let myquery = { _id : new mongodb.ObjectID(req.params.id)}
+    let newvalues = {
         $set: {
         customer_email: req.body.customer_email,
         customer_password: req.body.customer_password,
@@ -76,18 +76,19 @@ customerRoutes.route("/cust/update/account/:id").post(function (req, res) {
     };  
 
     
-        db_connect.collection("DataCustomer").updateOne(id_account, new_values, function (err, res){
-            if (err) throw err;
-            res.status(201).json({
-                message: "Succesfully updated",
-                result
-        });
+    db_connect
+    .collection("DataCustomer")
+    .updateOne(myquery, newvalues, function (err, result) {
+      if (err) throw err;
+      res.status(201).json({
+        message: "Succesfully updated",
+        result
+      });
     });
 });
 
 // CUSTOMER CREATE ORDER // (FR1)
 customerRoutes.route("/cust/create/order").post(function (req, res) {
-    let db_connect = dbo.getDb("On-Demand");
     let new_order = {
         id_driver: req.body.profile.name,
         id_customer:req.body,
@@ -170,30 +171,31 @@ customerRoutes.route("/cust/create/review").post(function (req, res) {
     }
 });
 // CUSTOMER GET ALL ORDER HISTORY // (FR4)
-// customerRoutes.route("/cust/get/allorder_history").get(function (req, res) {
-//     try{
-//         db_connect.collection("ActivityHistory").find();
-//         res.status(201).json({
-//         message: "Succesfully inserted",
-//         new_account
-//     });
-//     }catch(err){
-//         console.log(err);
-//     }
-// });
-
-customerRoutes.route("/cust/get/allorder_history").get(function (req, res) {
+customerRoutes.route("/cust/get/allorder_history/:id").get(function (req, res) {
     let db_connect = dbo.getDb("employees");
-    let mySort = {name: 1};
+    var myquery = { id_customer :req.params.id };
     db_connect
       .collection("ActivityHistory")
-      .find({})
-      .sort(mySort)
+      .find(myquery)
       .toArray(function (err, result) {
         if (err) throw err;
         res.json(result);
       });
   });
+
+// CUSTOMER READ ACTIVITY PER CATEGORY (FR4)
+customerRoutes.route("/cust/get/history/:category").get(function (req, res) {
+    let db_connect = dbo.getDb("employees");
+    let myquery = { type_of_service: req.params.category };
+    db_connect
+      .collection("ActivityHistory")
+      .find(myquery)
+      .toArray(function (err, result) {
+        if (err) throw err;
+        res.json(result);
+      });
+  });
+
 // CUSTOMER GET ORDER HISTORY (motorcycle) // (FR4)
 customerRoutes.route("/cust/get/order_history/motorcycle").get(function (req, res) {
     try{
@@ -230,4 +232,17 @@ customerRoutes.route("/cust/get/order_history/barang").get(function (req, res) {
         console.log(err);
     }
 });
+
+// READ 1 ACTIVITY
+customerRoutes.route("/cust/read/activity/:id").get((req, res) => {
+    let db_connect = dbo.getDb("employees");
+    var myquery = { _id: new mongodb.ObjectID(req.params.id) };
+    db_connect
+      .collection("ActivityHistory")
+      .find(myquery)
+      .toArray(function (err, result) {
+        if (err) throw err;
+        res.json(result);
+      });
+  });
 module.exports = customerRoutes;
