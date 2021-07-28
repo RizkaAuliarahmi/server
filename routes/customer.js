@@ -137,36 +137,50 @@ customerRoutes.route("/cust/read/order/:id").get(function (req, res) {
             res.json(result);
           });
 });
+
 // CUSTOMER GET DRIVER PROFILE // (FD9)
-customerRoutes.route("/cust/get/driver_profile").get(function (req, res) {
-    try{
-        db_connect.collection("DataDriver").find();
-        res.status(201).json({
-        message: "Succesfully inserted",
-        new_account
+customerRoutes.route("/cust/get/driver_profile/:id").get((req, res) =>  {
+    let db_connect = dbo.getDb("employees");
+    var myquery = { _id: new mongodb.ObjectID(req.params.id) };
+    db_connect
+    .collection("DataDriver")
+    .find(myquery)
+    .toArray(function (err, result) {
+      if (err) throw err;
+      res.json(result);
+      // console.log(result);
     });
-    }catch(err){
-        console.log(err);
-    }
 });
 // CUSTOMER CREATE REVIEW // (FR3)
 customerRoutes.route("/cust/create/review").post(function (req, res) {
-    let db_connect = dbo.getDb("On-Demand");
-    let new_review = {
+    let db_connect = dbo.getDb("employees");
+    let _id =  new mongodb.ObjectID();
+      let new_review = {
         rating: req.body.rating,
         review: req.body.review
-    };
-
-    try{
+      };
+      try{
         db_connect.collection("Feedback").insertOne(new_review);
         res.status(201).json({
         message: "Succesfully inserted",
         new_review
-    });
-    }catch(err){
+      });
+      }catch(err){
         console.log(err);
-    }
-});
+      }
+  });
+  // CUSTOMER READ FEEDBACK // (FR3)
+customerRoutes.route("/cust/read/feedback/:id").get((req, res) => {
+    let db_connect = dbo.getDb("employees");
+    let id = { _id: new mongodb.ObjectID(req.params.id) };
+    db_connect
+    .collection("Feedback")
+    .find(id)
+    .toArray(function (err, result) {
+      if (err) throw err;
+      res.json(result);
+    });
+  });
 // CUSTOMER GET ALL ORDER HISTORY // (FR4)
 customerRoutes.route("/cust/get/allorder_history/:id").get(function (req, res) {
     let db_connect = dbo.getDb("employees");
